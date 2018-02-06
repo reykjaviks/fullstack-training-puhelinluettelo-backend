@@ -31,6 +31,8 @@ let persons = [
 ]
 
 // Middleware
+app.use(express.static('build'))
+
 app.use(bodyParser.json())
 
 app.use(morgan(':method :url :status :body - :response-time ms'))
