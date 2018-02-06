@@ -43,7 +43,7 @@ app.use(cors())
 
 // Endpoints
 app.get('/', (req, res) => {
-  res.send('<h1>Puhelinluettelo</h1>')
+  res.send('<h1>Puhelinluettelon backend</h1>')
 })
 
 app.get('/api/persons', (req, res) => {
