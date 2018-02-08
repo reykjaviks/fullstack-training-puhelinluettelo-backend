@@ -7,15 +7,10 @@ const Person = require('./models/person')
 
 // Database handling
 const mongoose = require('mongoose')
-const url = 'mongodb://fullstack:<>@ds229008.mlab.com:29008/puhelinluettelo-persons'
-mongoose.connect(url)
 
-const formatPerson = (person) => {
-  const formattedPerson = { ...person._doc, id: person._id}
-  delete formattedPerson._id
-  delete formattedPerson.__v
-  return formattedPerson
-}
+const url = 'mongodb://fullstack:<>@ds229008.mlab.com:29008/puhelinluettelo-persons'
+
+mongoose.connect(url)
 
 const generateId = () => Math.floor(Math.random() * 10000)
 
@@ -65,7 +60,7 @@ app.get('/api/persons', (req, res) => {
   Person
     .find({})
     .then(persons => {
-      res.json(persons.map(formatPerson))
+      res.json(persons.map(Person.format))
     })
 })
 
@@ -76,23 +71,13 @@ app.get('/info', (req, res) => {
             </div>`)
 })
 
+// Tehtävän 3.18 alkua
 app.get('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  const person = persons.find(person => person.id === id)
-
-  /*
   Person
     .findById(req.params.id)
     .then(person => {
-      res.json(formatPerson(person))
+      res.json(Person.format(person))
     })
-    */
-
-  if (person) {
-    res.json(person)
-  } else {
-    res.status(404).end()
-  }
 })
 
 app.post('/api/persons', (req, res) => {
@@ -107,11 +92,11 @@ app.post('/api/persons', (req, res) => {
   person
     .save()
     .then(savedPerson => {
-      res.json(formatPerson(savedPerson))
+      res.json(Person.format(savedPerson))
     })
 })
 
-//app.put
+//app.put, tehtävä 3.17
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
