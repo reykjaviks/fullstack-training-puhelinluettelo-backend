@@ -3,6 +3,19 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
+
+// Database handling
+const mongoose = require('mongoose')
+const url = 'mongodb://fullstack:<>@ds229008.mlab.com:29008/puhelinluettelo-persons'
+mongoose.connect(url)
+
+const formatPerson = (person) => {
+  const formattedPerson = { ...person._doc, id: person._id}
+  delete formattedPerson._id
+  delete formattedPerson.__v
+  return formattedPerson
+}
 
 const generateId = () => Math.floor(Math.random() * 10000)
 
@@ -49,7 +62,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person
+    .find({})
+    .then(persons => {
+      res.json(persons.map(formatPerson))
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -63,6 +80,14 @@ app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   const person = persons.find(person => person.id === id)
 
+  /*
+  Person
+    .findById(req.params.id)
+    .then(person => {
+      res.json(formatPerson(person))
+    })
+    */
+
   if (person) {
     res.json(person)
   } else {
@@ -73,22 +98,17 @@ app.get('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
-  if (body.name === undefined || body.number === undefined) {
-    return res.status(400).json({error: 'name or number missing'})
-  }
-  // Checks for duplicates
-  if (persons.find(person => person.name === body.name)) {
-    return res.status(400).json({error: 'name must be unique'})
-  }
-
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
     id: generateId()
-  }
-  persons = persons.concat(person)
+  })
 
-  res.json(person)
+  person
+    .save()
+    .then(savedPerson => {
+      res.json(formatPerson(savedPerson))
+    })
 })
 
 //app.put
