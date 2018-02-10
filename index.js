@@ -10,8 +10,6 @@ const mongoose = require('mongoose')
 const url = 'mongodb://fullstack:<>@ds229008.mlab.com:29008/puhelinluettelo-persons'
 mongoose.connect(url)
 
-const generateId = () => Math.floor(Math.random() * 10000)
-
 // Middleware
 app.use(express.static('build'))
 app.use(bodyParser.json())
@@ -74,7 +72,6 @@ app.post('/api/persons', (req, res) => {
   const person = new Person({
     name: body.name,
     number: body.number,
-    id: generateId()
   })
 
   person
