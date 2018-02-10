@@ -5,11 +5,6 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
-// Mongoose
-const mongoose = require('mongoose')
-const url = 'mongodb://fullstack:faust@ds229008.mlab.com:29008/puhelinluettelo-persons'
-mongoose.connect(url)
-
 // Middleware
 app.use(express.static('build'))
 app.use(bodyParser.json())

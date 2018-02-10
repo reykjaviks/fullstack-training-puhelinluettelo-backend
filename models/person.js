@@ -1,6 +1,12 @@
 const mongoose = require('mongoose')
-const url = 'mongodb://fullstack:<>@ds229008.mlab.com:29008/puhelinluettelo-persons'
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
+const url = process.env.MONGODB_URI
 mongoose.connect(url)
+mongoose.Promise = global.Promise
 
 const Person = mongoose.model('Person', {
   name: String,
