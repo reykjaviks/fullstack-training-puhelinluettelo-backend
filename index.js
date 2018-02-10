@@ -30,6 +30,9 @@ app.get('/api/persons', (req, res) => {
     .then(persons => {
       res.json(persons.map(Person.format))
     })
+    .catch(error => {
+      res.status(400).send({ error: 'client error' })
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -64,11 +67,6 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   const body = req.body
-
-  if (body.name === undefined || body.number === undefined) {
-    return res.status(400).json({ error: 'name or number missing' })
-  }
-
   const person = new Person({
     name: body.name,
     number: body.number,
@@ -77,7 +75,11 @@ app.post('/api/persons', (req, res) => {
   person
     .save()
     .then(savedPerson => {
-      res.json(Person.format(savedPerson))
+    res.json(Person.format(savedPerson))
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(400).send({ error: 'client error'})
     })
 })
 
