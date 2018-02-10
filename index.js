@@ -65,18 +65,32 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-  const lkm = persons.length, date = new Date()
-  res.send(`<div>puhelinluettelossa on ${lkm} henkilön tiedot
-              <div>${date}</div>
-            </div>`)
+  Person
+    .find({})
+    .then(people => {
+      res.send(`<div>puhelinluettelossa on ${people.length} henkilön tiedot
+                  <div>${new Date()}</div>
+                </div>`)
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(400).json({ error: 'error retrieving numbers' })
+    })
 })
 
-// Tehtävän 3.18 alkua
 app.get('/api/persons/:id', (req, res) => {
   Person
     .findById(req.params.id)
     .then(person => {
-      res.json(Person.format(person))
+      if (person) {
+        res.json(Person.format(person))
+      } else {
+        res.status(404).end()
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(404).send({ error: 'malformatted id' })
     })
 })
 
@@ -84,7 +98,7 @@ app.post('/api/persons', (req, res) => {
   const body = req.body
 
   if (body.name === undefined || body.number === undefined) {
-    return res.status(400).json({error: 'name or number missing'})
+    return res.status(400).json({ error: 'name or number missing' })
   }
 
   const person = new Person({
