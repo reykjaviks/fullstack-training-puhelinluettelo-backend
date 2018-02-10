@@ -83,6 +83,10 @@ app.get('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const body = req.body
 
+  if (body.name === undefined || body.number === undefined) {
+    return res.status(400).json({error: 'name or number missing'})
+  }
+
   const person = new Person({
     name: body.name,
     number: body.number,
@@ -99,10 +103,15 @@ app.post('/api/persons', (req, res) => {
 //app.put, tehtävä 3.17
 
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  persons = persons.filter(person => person.id !== id)
-
-  res.status(204).end()
+  Person
+    .findByIdAndRemove(req.params.id)
+    .then(result => {
+      res.status(204).end()
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(400).send({ error: 'malformatted id' })
+    })
 })
 
 const PORT = process.env.PORT || 3001
