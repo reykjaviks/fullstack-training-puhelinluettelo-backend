@@ -5,7 +5,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
-// Database handling
+// Mongoose
 const mongoose = require('mongoose')
 const url = 'mongodb://fullstack:<>@ds229008.mlab.com:29008/puhelinluettelo-persons'
 mongoose.connect(url)
@@ -24,17 +24,6 @@ app.get('/', (req, res) => {
   res.send('<h1>Puhelinluettelon backend</h1>')
 })
 
-app.get('/api/persons', (req, res) => {
-  Person
-    .find({})
-    .then(persons => {
-      res.json(persons.map(Person.format))
-    })
-    .catch(error => {
-      res.status(400).send({ error: 'client error' })
-    })
-})
-
 app.get('/info', (req, res) => {
   Person
     .find({})
@@ -46,6 +35,17 @@ app.get('/info', (req, res) => {
     .catch(error => {
       console.log(error)
       res.status(400).json({ error: 'error retrieving numbers' })
+    })
+})
+
+app.get('/api/persons', (req, res) => {
+  Person
+    .find({})
+    .then(persons => {
+      res.json(persons.map(Person.format))
+    })
+    .catch(error => {
+      res.status(400).send({ error: 'client error' })
     })
 })
 
