@@ -7,7 +7,7 @@ const Person = require('./models/person')
 
 // Mongoose
 const mongoose = require('mongoose')
-const url = 'mongodb://fullstack:<>@ds229008.mlab.com:29008/puhelinluettelo-persons'
+const url = 'mongodb://fullstack:faust@ds229008.mlab.com:29008/puhelinluettelo-persons'
 mongoose.connect(url)
 
 // Middleware
@@ -71,11 +71,11 @@ app.post('/api/persons', (req, res) => {
     name: body.name,
     number: body.number,
   })
-
   person
     .save()
-    .then(savedPerson => {
-    res.json(Person.format(savedPerson))
+    .then(Person.format)
+    .then(savedAndFormattedPerson => {
+      res.json(savedAndFormattedPerson)
     })
     .catch(error => {
       console.log(error)
